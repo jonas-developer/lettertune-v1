@@ -1,0 +1,51 @@
+# Environment & secrets
+.env
+.env.*
+*.env
+
+
+# Python cache / bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+
+# Dependency / build files
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.iml
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+# Logs
+*.log
+
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# Test & coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Optional: local config
+config.local.py
+settings.local.py

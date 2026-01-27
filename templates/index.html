@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LetterTune v1 — Cover Letter Creator</title>
+
+  <style>
+    :root{
+    /* Base surfaces */
+    --bg: #f6f8f4;
+    --card: rgba(255,255,255,0.85);
+    --card-strong: rgba(255,255,255,0.95);
+
+    /* Text */
+    --text: #1f2a1a;
+    --muted: #777e72;
+
+    /* Borders & shadows */
+    --border: rgba(31,42,26,0.12);
+    --shadow: 0 10px 28px rgba(31,42,26,0.12);
+    --radius: 12px;
+
+    /* 🌿 LetterTune green palette */
+    --accent: #8FA31E;
+    --accent-soft: #A9BC4A;
+    --accent-dark: #6E8014;
+
+    --success: #5FAF3B;
+    --danger: #E5533D;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+
+
+    *{ box-sizing: border-box; }
+    body{
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--text);
+background:
+  radial-gradient(900px 600px at 15% 0%, rgba(32, 203, 17, 0.45), transparent 55%),
+  radial-gradient(800px 500px at 85% 25%, rgba(36, 165, 26, 0.38), transparent 50%),
+  linear-gradient(180deg, #ffffff, #e9f6ef);
+
+
+
+
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    }
+
+
+
+    .container{
+      width: min(980px, 100%);
+      display: grid;
+      gap: 18px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+    }
+
+    .title{
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 62ch;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ flex-direction: column; }
+      .pill{ align-self: flex-start; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-inner{
+      padding: 16px;
+      display:grid;
+      gap: 14px;
+    }
+
+    .section-title{
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+
+    .section-title strong{
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    label{
+      display:grid;
+      gap: 8px;
+    }
+
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    textarea, select, input[type="text"]{
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.95);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 12px 12px;
+      outline: none;
+      resize: vertical;
+      min-height: 260px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    input[type="text"]{
+      min-height: 44px;
+      resize: none;
+    }
+
+    textarea:focus, select:focus, input[type="text"]:focus{
+    border-color: rgba(143,163,30,0.65);
+    box-shadow: 0 0 0 4px rgba(143,163,30,0.18);
+    }
+
+    select{
+      min-height: 44px;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.65) 50%),
+        linear-gradient(135deg, rgba(255,255,255,0.65) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 19px,
+        calc(100% - 13px) 19px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 36px;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.04s ease, opacity 0.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      user-select:none;
+      font-size: 14px;
+    }
+
+    button:active{ transform: translateY(1px); }
+
+    .btn-primary{
+    /* background: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent-soft)
+    );
+    color: #1b250c;
+    box-shadow: 0 10px 24px rgba(143,163,30,0.28); */
+        background: linear-gradient(
+        135deg,
+        var(--success),
+        rgba(32, 203, 17, 0.45)
+    );
+    color: #0f1d0b;
+    box-shadow: 0 10px 24px rgba(95,175,59,0.25);
+    font-weight: 800;
+    }
+
+
+
+    .btn-secondary{
+    background: #ffffff;
+    color: var(--text);
+    border: 1px solid var(--border);
+    }
+
+
+    .btn-success{
+    background: linear-gradient(
+        135deg,
+        var(--success),
+        rgba(32, 203, 17, 0.45)
+    );
+    color: #0f1d0b;
+    box-shadow: 0 10px 24px rgba(95,175,59,0.25);
+    font-weight: 800;
+    }
+
+
+
+    .btn-danger{
+      background: rgba(239,68,68,0.15);
+      color: rgba(30, 29, 29, 0.92);
+      border: 1px solid rgba(239,68,68,0.35);
+    }
+
+    .status{
+      font-size: 13px;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-height: 20px;
+    }
+
+    .spinner{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.18);
+      border-top-color: rgba(255,255,255,0.9);
+      animation: spin 0.8s linear infinite;
+      display:none;
+    }
+
+    .loading .spinner{ display:inline-block; }
+    .loading .status-text{ color: rgba(255,255,255,0.85); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result{
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 11px;
+    }
+
+
+    .meta{
+      display:grid;
+      gap: 10px;
+    }
+
+    .meta-box{
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .meta-title{
+      margin: 0 0 6px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.82);
+    }
+
+    .error{
+      border: 1px solid rgba(239,68,68,0.35);
+      background: rgba(239,68,68,0.10);
+      color: rgba(255,255,255,0.92);
+      border-radius: 8px;
+      padding: 12px;
+      display:none;
+    }
+
+    .row{
+      display:grid;
+      gap: 12px;
+    }
+
+    .row.two{
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px){
+      .row.two{ grid-template-columns: 1fr; }
+    }
+
+    .small{
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .kbd{
+      font-family: var(--mono);
+      font-size: 14px;
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(50,50,50,1.0);
+    }
+
+        /* =========================
+        LINE LOADER
+        ========================= */
+
+        .loader-wrapper{
+        width: 100%;
+        height: 4px;
+        background: rgba(143,163,30,0.15);
+        border-radius: 999px;
+        overflow: hidden;
+        display: none;
+        }
+
+        .loader-line{
+        width: 35%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(143,163,30,0.3),
+            rgba(143,163,30,1),
+            rgba(143,163,30,0.3)
+        );
+        border-radius: 999px;
+        animation: loading-line 1.2s ease-in-out infinite;
+        }
+
+        @keyframes loading-line{
+        0%   { transform: translateX(-100%); }
+        50%  { transform: translateX(150%); }
+        100% { transform: translateX(300%); }
+        }
+
+        .loader-wrapper {
+        margin-top: 10px;
+        }
+
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1 class="title">LetterTune v1</h1>
+        <p class="subtitle">
+          Generate a personalized cover letter in your own style
+        </p>
+      </div>
+
+      <div class="pill" title="Tip: Use this for quick iteration" style="display: none;">
+        <span>Tip:</span>
+        <span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> to generate
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: INPUTS -->
+      <div class="card">
+        <div class="card-inner">
+          <p class="section-title"><strong>Inputs</strong><span class="hint"></span></p>
+
+          <div class="row two">
+            <label>
+              <span class="hint">AI Model</span>
+                <select id="model">
+                <option value="llama">LLaMA (Meta)</option>
+                <option value="granite">Granite (IBM)</option>
+                <option value="mistral">Mistral</option>
+                <option value="openai">OpenAI (GPT-4)</option>
+                <option value="deepseek">DeepSeek</option>
+                </select>
+            </label>
+
+            <label>
+              <span class="hint">Additional instructions (optional)</span>
+              <input id="additional_instructions" type="text" placeholder='e.g. "Write in German, under 250 words"' />
+            </label>
+          </div>
+
+          <label>
+            <span class="hint">Company + job offer info</span>
+            <textarea id="company_job_info" placeholder="Paste the job posting and any notes about the company..."></textarea>
+          </label>
+
+          <label>
+            <span class="hint">Applicant background / resume</span>
+            <textarea id="applicant_background" placeholder="Paste your resume, skills, experience, achievements, tools..."></textarea>
+          </label>
+
+          <label>
+            <span class="hint">Previous cover letter (style reference)</span>
+            <textarea id="previous_cover_letter" placeholder="Paste a previous cover letter you wrote (for style)"></textarea>
+          </label>
+
+          <div class="actions" id="actions">
+            <button class="btn-primary" id="generateBtn">
+              <span>Generate</span>
+            </button>
+            <button class="btn-secondary" id="fillExampleBtn" type="button">Fill example</button>
+            <button class="btn-danger" id="clearBtn" type="button">Clear</button>
+          </div>
+
+            <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader-line"></div>
+            </div>
+
+
+          <div class="error" id="errorBox"></div>
+          
+        </div>
+      </div>
+
+      <!-- RIGHT: OUTPUT -->
+      <div class="card">
+        <div class="card-inner">
+          <p class="section-title"><strong>Result</strong><span class="hint"></span></p>
+
+          <div class="meta">
+            <div class="meta-box">
+              <p class="meta-title">Cover letter</p>
+              <div class="result" id="coverLetterResult">Your generated cover letter will appear here…</div>
+              <div class="actions" style="margin-top:12px;">
+                <button class="btn-success" id="copyBtn" type="button">Copy letter</button>
+              </div>
+            </div>
+
+            <div class="meta-box">
+              <p class="meta-title">Key matches</p>
+              <div class="chips" id="keyMatches" style="font-size: 11px; padding: 5px; border-radius: 8px;"></div>
+            </div>
+
+            <div class="meta-box">
+              <p class="meta-title">Style notes</p>
+              <div class="result" id="styleNotes" style="min-height: 92px;"></div>
+            </div>
+
+            <div class="meta-box">
+              <p class="meta-title">Generation info</p>
+              <div class="hint" id="runInfo">—</div>
+            </div>
+          </div>
+
+            <div style="width: 100%; text-align: center;"><p class="small">Copyright &copy; L.J Bergman</p></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    const actions = el("actions");
+   
+    const errorBox = el("errorBox");
+   
+
+    const coverLetterResult = el("coverLetterResult");
+    const keyMatches = el("keyMatches");
+    const styleNotes = el("styleNotes");
+    const runInfo = el("runInfo");
+
+    const loaderWrapper = el("loaderWrapper");
+
+    function setLoading(isLoading){
+    if(isLoading){
+        loaderWrapper.style.display = "block";
+        el("generateBtn").disabled = true;
+    } else {
+        loaderWrapper.style.display = "none";
+        el("generateBtn").disabled = false;
+    }
+    }
+
+
+    function setError(msg){
+      if(!msg){
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
+        return;
+      }
+      errorBox.style.display = "block";
+      errorBox.textContent = msg;
+    }
+
+    function setKeyMatches(items){
+      keyMatches.innerHTML = "";
+      if(!items || !items.length){
+        keyMatches.innerHTML = `<span class="hint">—</span>`;
+        return;
+      }
+      for(const t of items){
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = t;
+        keyMatches.appendChild(chip);
+      }
+    }
+
+        async function generate(){
+        setError("");
+        setLoading(true);
+
+
+      const payload = {
+        model: el("model").value,
+        company_job_info: el("company_job_info").value,
+        applicant_background: el("applicant_background").value,
+        previous_cover_letter: el("previous_cover_letter").value,
+        additional_instructions: el("additional_instructions").value
+      };
+
+      try{
+        const res = await fetch("/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if(!res.ok){
+          const missing = data.missing_fields ? ` Missing: ${data.missing_fields.join(", ")}` : "";
+          throw new Error((data.error || "Request failed") + missing);
+        }
+
+        coverLetterResult.textContent = data.cover_letter || "";
+        styleNotes.textContent = data.style_notes || "";
+        setKeyMatches(data.key_matches || []);
+
+        const dur = (data.duration !== undefined) ? `${data.duration}s` : "—";
+        runInfo.textContent = `AI Model: ${data.model || "—"} · Duration: ${dur}`;
+
+        setLoading(false);
+      } catch(err){
+        setLoading(false);
+        setError(err.message || "Something went wrong");
+      }
+    }
+
+    el("generateBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      generate();
+    });
+
+    // Ctrl+Enter generates
+    document.addEventListener("keydown", (e) => {
+      if((e.ctrlKey || e.metaKey) && e.key === "Enter"){
+        generate();
+      }
+    });
+
+    el("copyBtn").addEventListener("click", async () => {
+      const text = coverLetterResult.textContent || "";
+      if(!text || text.includes("will appear here")) return;
+      try{
+        await navigator.clipboard.writeText(text);
+        setLoading(false, "Copied ✅");
+        setTimeout(() => { statusText.textContent = ""; }, 900);
+      } catch {
+        setError("Could not copy automatically. Please copy manually.");
+      }
+    });
+
+    el("clearBtn").addEventListener("click", () => {
+      el("company_job_info").value = "";
+      el("applicant_background").value = "";
+      el("previous_cover_letter").value = "";
+      el("additional_instructions").value = "";
+      coverLetterResult.textContent = "Your generated cover letter will appear here…";
+      styleNotes.textContent = "";
+      setKeyMatches([]);
+      runInfo.textContent = "—";
+      setError("");
+      statusText.textContent = "";
+    });
+
+    // Optional: quick example filler (client-side)
+    el("fillExampleBtn").addEventListener("click", () => {
+      el("company_job_info").value =
+`Company: Stadtbank Mitte eG
+Position: Junior Banking Operations Associate
+Mission: Provide reliable financial services and support the local community with responsible banking solutions.
+
+Responsibilities:
+- Support daily banking operations
+- Assist with account management and customer inquiries
+- Process transactions and documentation
+- Collaborate with customer advisors and compliance teams
+
+Requirements:
+- Basic understanding of banking or finance
+- Attention to detail
+- Customer-oriented mindset
+- Reliability and discretion
+- Interest in local and community banking
+Location: Berlin (on-site / hybrid)
+`;
+
+      el("applicant_background").value =
+`B.A. Business Administration (2019–2022)
+Focus: Finance and Accounting
+
+Skills:
+- MS Excel and Office
+- Basic accounting
+- Data entry and documentation
+- Customer communication
+- Attention to detail
+
+Internship (Volksbank Nord eG):
+- Assisted with customer account administration
+- Supported transaction processing and internal reporting
+- Maintained accurate financial records
+- Helped improve internal workflows
+
+Projects:
+- Budget planning and expense analysis project
+- Case study on retail banking operations
+
+Languages:
+German native, English fluent
+`;
+
+      el("previous_cover_letter").value =
+`Dear Hiring Team,
+
+I am writing to apply for a position at your bank, as I am highly motivated
+to start my career in the financial sector and contribute to reliable
+and customer-focused banking services.
+
+During my studies and internship, I have developed a strong interest in
+banking operations and financial processes. I value accuracy, structured work,
+and clear communication, especially when dealing with sensitive information.
+
+I would welcome the opportunity to further discuss how my skills and motivation
+could be a good fit for your team.
+
+Kind regards,
+Jonka Bergman
+`;
+
+      el("additional_instructions").value = "Keep it under 250 words. Reference the company's mission.";
+      setError("");
+      statusText.textContent = "Example loaded. Hit Generate →";
+    });
+  </script>
+</body>
+</html>
