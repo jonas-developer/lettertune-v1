@@ -5,7 +5,7 @@ python-dotenv==1.0.0
 langchain==0.2.16
 langchain-core==0.2.38
 langchain-openai==0.1.23
-langchain-ibm==0.1.16
+langchain-ibm==0.2.2
 
 openai==1.40.6
 ibm-watsonx-ai>=0.2.6
