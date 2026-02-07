@@ -42,6 +42,14 @@ def usage():
         "limit": MAX_GENERATIONS
     })
 
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(app.static_folder, "robots.txt")
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(app.static_folder, "sitemap.xml")
+
 
 @app.route("/generate", methods=["POST"])
 def generate():
