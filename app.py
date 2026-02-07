@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory, current_app
+import os
+
 
 from model import (
     llama_response,
