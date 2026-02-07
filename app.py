@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, end_from_directory, current_app
+from flask import Flask, request, jsonify, render_template, send_from_directory, current_app
 
 from model import (
     llama_response,
